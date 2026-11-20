@@ -47,32 +47,55 @@ function comicPanel(img, p, pw, ph, tint) {
   }
   ctx.putImageData(image, 0, 0);
   if (tint) {
-    ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = COMIC.tintSoft; ctx.fillStyle = tint; ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = COMIC.tintOverlay; ctx.fillRect(0, 0, w, h);
+    const mix = clamp(p.tintMix ?? 1, 0, 1);
+    ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = COMIC.tintSoft * mix; ctx.fillStyle = tint; ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = COMIC.tintOverlay * mix; ctx.fillRect(0, 0, w, h);
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   }
   return canvas;
 }
 
 function drawCenterTitle(ctx, W, H, state) {
-  const words = String(state.title || '').toUpperCase().split(/\s+/).filter(Boolean);
+  const words = String(state.title || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return;
   const line2 = words.pop(), line1 = words.join(' '), lines = line1 ? [line1, line2] : [line2];
-  const family = state.titleFont || 'Bowlby One'; let size = Math.round(H * .155);
-  ctx.font = `${size}px ${family}, sans-serif`;
-  while (Math.max(...lines.map(line => ctx.measureText(line).width)) > W * .88 && size > 20) { size -= 3; ctx.font = `${size}px ${family}, sans-serif`; }
-  const lineStep = size * .87, cy = H * .415, firstY = cy - (lines.length - 1) * lineStep / 2;
-  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; ctx.lineWidth = size * .18; ctx.strokeStyle = '#060606';
+  const family = state.titleFont || 'Bowlby One';
+  const rand = (i, code, salt) => { const v = Math.sin(i * 127.1 + code * 311.7 + salt * 74.7) * 43758.5453; return v - Math.floor(v); };
+  let size = Math.round(H * .19);
+  const layoutLine = (line) => {
+    ctx.font = `${size}px ${family}, sans-serif`;
+    const spacing = -size * .065;
+    const chars = [...line].map((ch, i) => {
+      const code = ch.charCodeAt(0);
+      return { ch, adv: ctx.measureText(ch).width, rot: (rand(i, code, 1) - .5) * .07, sy: 1.18 + rand(i, code, 2) * .14, sx: .88, dy: (rand(i, code, 3) - .5) * size * .04 };
+    });
+    const width = chars.reduce((s, c) => s + c.adv * c.sx, 0) + spacing * Math.max(0, chars.length - 1);
+    return { chars, spacing, width };
+  };
+  let laid = lines.map(layoutLine);
+  while (Math.max(...laid.map(l => l.width)) > W * .94 && size > 20) { size -= 3; laid = lines.map(layoutLine); }
+  const lineStep = size * .78, cy = H * .415, firstY = cy - (lines.length - 1) * lineStep / 2;
+  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = size * .05; ctx.shadowOffsetY = size * .04;
-  ctx.letterSpacing = `${-size * .015}px`;
-  lines.forEach((line, i) => { const y = firstY + i * lineStep; ctx.strokeText(line, W / 2, y); ctx.fillStyle = '#ffffff'; ctx.fillText(line, W / 2, y); });
-  if (state.subtitle) {
-    ctx.font = `${Math.round(H * .026)}px ${family}, sans-serif`; ctx.letterSpacing = `${Math.max(1, W * .004)}px`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const y = cy + (lines.length - 1) * lineStep / 2 + size * .74;
-    ctx.lineWidth = Math.max(2, H * .026 * .16); ctx.strokeStyle = '#060606'; ctx.strokeText(String(state.subtitle), W / 2, y);
-    ctx.fillStyle = '#ffffff'; ctx.fillText(String(state.subtitle), W / 2, y);
-  }
+  lines.forEach((line, li) => {
+    const y = firstY + li * lineStep, L = laid[li];
+    let cursor = W / 2 - L.width / 2;
+    const pos = L.chars.map(c => { const cx = cursor + (c.adv * c.sx) / 2; cursor += c.adv * c.sx + L.spacing; return { ...c, cx }; });
+    ctx.lineWidth = size * .20; ctx.strokeStyle = '#060606';
+    for (const p of pos) { ctx.save(); ctx.translate(p.cx, y + p.dy); ctx.rotate(p.rot); ctx.scale(p.sx, p.sy); ctx.strokeText(p.ch, 0, 0); ctx.restore(); }
+    ctx.fillStyle = '#ffffff';
+    for (const p of pos) { ctx.save(); ctx.translate(p.cx, y + p.dy); ctx.rotate(p.rot); ctx.scale(p.sx, p.sy); ctx.fillText(p.ch, 0, 0); ctx.restore(); }
+  });
   ctx.restore();
+  if (state.subtitle) {
+    const sub = String(state.subtitle).toLowerCase(), ss = Math.round(H * .027);
+    ctx.save(); ctx.font = `${ss}px ${family}, sans-serif`; ctx.letterSpacing = `${Math.max(1, W * .003)}px`;
+    const tw = ctx.measureText(sub).width, padX = ss * .85, pillH = ss * 1.75, pw = tw + padX * 2, px = W / 2 - pw / 2, py = H * .945 - pillH / 2;
+    ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = ss * .35; ctx.fillStyle = 'rgba(6,6,6,.93)';
+    ctx.beginPath(); ctx.roundRect(px, py, pw, pillH, pillH / 2); ctx.fill();
+    ctx.shadowColor = 'transparent'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(sub, W / 2, H * .945 + ss * .05); ctx.restore();
+  }
 }
 
 function grade(ctx, w, h, name) {
@@ -106,7 +129,7 @@ export function drawCover(canvas, state) {
     const x0 = x * W + gap / 2, y0 = y * H + gap / 2, pw = rw * W - gap, ph = rh * H - gap;
     ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, pw, ph); ctx.clip();
     if (img && state.grade === 'comic') {
-      ctx.drawImage(comicPanel(img, p, pw, ph, COMIC_TINTS[i % COMIC_TINTS.length]), x0, y0, pw, ph);
+      ctx.drawImage(comicPanel(img, p, pw, ph, (p.tint || COMIC_TINTS[i % COMIC_TINTS.length])), x0, y0, pw, ph);
     } else if (img) {
       const scale = Math.max(pw / img.width, ph / img.height) * clamp(p.zoom || 1, 1, 3);
       const dw = img.width * scale, dh = img.height * scale;

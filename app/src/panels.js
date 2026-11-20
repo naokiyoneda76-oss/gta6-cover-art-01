@@ -21,7 +21,7 @@ export const PANEL_CROPS = {
   collage: [{ zoom: 1.02, ox: 0, oy: -.02, tone: 'normal' }, { zoom: 1.3, ox: .1, oy: -.4, tone: 'warm' }, { zoom: 1.15, ox: 0, oy: -.3, tone: 'normal' }, { zoom: 1.2, ox: -.05, oy: -.4, tone: 'cool' }, { zoom: 1.05, ox: 0, oy: -.4, tone: 'warm' }],
   grid6: [{ zoom: 1.18, ox: -.1, oy: -.14, tone: 'normal' }, { zoom: 1.08, ox: .05, oy: -.03, tone: 'warm' }, { zoom: 1.55, ox: .1, oy: -.3, tone: 'normal' }, { zoom: 1.26, ox: .1, oy: .02, tone: 'warm' }, { zoom: 1.03, ox: 0, oy: -.04, tone: 'normal' }, { zoom: 1.2, ox: -.12, oy: 0, tone: 'cool' }],
   hero: [{ zoom: 1, ox: 0, oy: -.3, tone: 'normal' }, { zoom: 1, ox: -.45, oy: 0, tone: 'normal' }, { zoom: 1.6, ox: .17, oy: -.33, tone: 'warm' }, { zoom: 1.3, ox: -.12, oy: -.35, tone: 'normal' }],
-  gta: [{ zoom: 1.55, ox: .18, oy: -.26, tone: 'normal' }, { zoom: 1.7, ox: -.19, oy: -.36, tone: 'normal' }, { zoom: 1.15, ox: .35, oy: -.43, tone: 'warm' }, { zoom: 1.2, ox: -.45, oy: -.5, tone: 'normal' }, { zoom: 1.1, ox: .5, oy: -.5, tone: 'warm' }, { zoom: 1.25, ox: -.17, oy: -.42, tone: 'normal' }, { zoom: 1.35, ox: .24, oy: -.39, tone: 'normal' }]
+  gta: [{ zoom: 1.22, ox: .2, oy: -.48, tone: 'normal' }, { zoom: 1.7, ox: -.19, oy: -.36, tone: 'normal', tint: '#17b6cf', tintMix: .65 }, { zoom: 1.15, ox: .35, oy: -.43, tone: 'warm' }, { zoom: 1.2, ox: -.45, oy: -.5, tone: 'normal' }, { zoom: 1.1, ox: .5, oy: -.5, tone: 'warm' }, { zoom: 1.25, ox: -.17, oy: -.42, tone: 'normal' }, { zoom: 1.35, ox: .24, oy: -.39, tone: 'normal' }]
 };
 
 export function panelCrop(layout, i) {
