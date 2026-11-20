@@ -1,4 +1,4 @@
-import { LAYOUTS, panelAt } from './panels.js';
+import { LAYOUTS, panelAt, panelCrop } from './panels.js';
 import { drawCover, renderExport } from './cover.js';
 import { runShot } from './shots.js';
 
@@ -10,7 +10,7 @@ window.viceState = state; let selected = 0, chosenPhoto = 0, drag = null;
 const $ = s => document.querySelector(s);
 const redraw = () => drawCover(canvas, state);
 const setStatus = message => { $('#status').textContent = message; };
-function ensurePanels() { while (state.panelState.length < LAYOUTS[state.layout].panels.length) state.panelState.push({ photo: state.panelState.length % Math.max(1, state.photos.length), zoom: 1, ox: 0, oy: 0, tone: 'normal' }); state.panelState.length = LAYOUTS[state.layout].panels.length; selected = Math.min(selected, state.panelState.length - 1); }
+function ensurePanels() { while (state.panelState.length < LAYOUTS[state.layout].panels.length) { const idx = state.panelState.length; state.panelState.push({ photo: idx % Math.max(1, state.photos.length), ...panelCrop(state.layout, idx) }); } state.panelState.length = LAYOUTS[state.layout].panels.length; selected = Math.min(selected, state.panelState.length - 1); }
 function renderLibrary() { const lib = $('#library'); lib.replaceChildren(); state.photos.forEach((img, i) => { const thumb = document.createElement('img'); thumb.src = img.src; thumb.className = `thumb${i === chosenPhoto ? ' selected' : ''}`; thumb.title = img.name || `Photo ${i + 1}`; thumb.onclick = () => { chosenPhoto = i; renderLibrary(); }; lib.append(thumb); }); }
 function renderLayouts() { const wrap = $('#layouts'); wrap.replaceChildren(); Object.entries(LAYOUTS).forEach(([key, value]) => { const b = document.createElement('button'); b.textContent = value.label; b.classList.toggle('active', state.layout === key); b.dataset.layout = key; b.onclick = () => { state.layout = key; ensurePanels(); renderLayouts(); renderChips(); syncControls(); redraw(); }; wrap.append(b); }); }
 function renderChips() { const wrap = $('#panelChips'); wrap.replaceChildren(); state.panelState.forEach((p, i) => { const b = document.createElement('button'); b.textContent = `Panel ${i + 1}`; b.classList.toggle('active', selected === i); b.onclick = () => { selected = i; renderChips(); syncControls(); }; wrap.append(b); }); }

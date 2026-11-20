@@ -1,4 +1,5 @@
 // Package the offline app and its screenshots, then write the make.fun entry dossier.
+// Screenshots are capped by the dossier rules (max 4 files, 262144 bytes each) — see shots.json for the four exported views.
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';

@@ -10,3 +10,17 @@ export function panelAt(layout, nx, ny) {
   const panels = (LAYOUTS[layout] || LAYOUTS.showcase).panels;
   return panels.findIndex(([x, y, w, h]) => nx >= x && nx <= x + w && ny >= y && ny <= y + h);
 }
+
+
+export const PANEL_CROPS = {
+  showcase: [{ zoom: 1, ox: 0, oy: 0, tone: 'normal' }],
+  duo: [{ zoom: 1.05, ox: -.05, oy: -.03, tone: 'normal' }, { zoom: 1.12, ox: .06, oy: -.08, tone: 'warm' }],
+  trio: [{ zoom: 1.22, ox: -.14, oy: -.12, tone: 'normal' }, { zoom: 1.05, ox: 0, oy: -.02, tone: 'warm' }, { zoom: 1.22, ox: .14, oy: -.12, tone: 'cool' }],
+  collage: [{ zoom: 1.02, ox: 0, oy: -.02, tone: 'normal' }, { zoom: 1.3, ox: .1, oy: -.18, tone: 'warm' }, { zoom: 1.15, ox: 0, oy: -.3, tone: 'normal' }, { zoom: 1.2, ox: -.05, oy: -.1, tone: 'cool' }, { zoom: 1.05, ox: 0, oy: 0, tone: 'warm' }],
+  grid6: [{ zoom: 1.18, ox: -.1, oy: -.14, tone: 'normal' }, { zoom: 1.08, ox: .05, oy: -.03, tone: 'warm' }, { zoom: 1.3, ox: .14, oy: -.16, tone: 'cool' }, { zoom: 1.26, ox: .1, oy: .02, tone: 'warm' }, { zoom: 1.03, ox: 0, oy: -.04, tone: 'normal' }, { zoom: 1.2, ox: -.12, oy: 0, tone: 'cool' }]
+};
+
+export function panelCrop(layout, i) {
+  const list = PANEL_CROPS[layout] || PANEL_CROPS.showcase;
+  return list[i % list.length];
+}
