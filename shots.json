@@ -1,6 +1,6 @@
 [
   { "name": "1-cover.jpg", "query": "?shot=cover&w=1920&h=1080&layout=collage&grade=sunset&photo=pier,boulevard&title=Vice%20Heat&subtitle=One%20city%20%2F%20no%20brakes", "w": 1920, "h": 1080 },
   { "name": "2-editor.jpg", "query": "?shot=editor&photo=pier,boulevard", "w": 1280, "h": 960 },
-  { "name": "3-cover.jpg", "query": "?shot=cover&w=1080&h=1350&layout=grid6&grade=neon&photo=boulevard,pier&title=Neon%20Boulevard&subtitle=After%20dark", "w": 1080, "h": 1350 },
+  { "name": "3-cover.jpg", "query": "?shot=cover&w=1080&h=1350&layout=hero&grade=neon&photo=boulevard,pier&title=Neon%20Boulevard&subtitle=After%20dark", "w": 1080, "h": 1350 },
   { "name": "4-cover.jpg", "query": "?shot=cover&w=1080&h=1080&layout=duo&grade=gold&photo=boulevard,pier&title=Golden%20Hour&subtitle=Last%20light%20run", "w": 1080, "h": 1080 }
 ]
