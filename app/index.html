@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10091d">
+  <title>Vice Panels — Cover Art Maker</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="topbar"><div><div class="brand">VICE <span>PANELS</span></div><p>Turn your own snapshots into after-dark cover art.</p></div><div class="offline">● OFFLINE STUDIO</div></header>
+  <main class="workspace">
+    <aside class="controls">
+      <section><h2>01 / Photos</h2><label class="upload">Add photos<input id="photoInput" type="file" accept="image/*" multiple></label><div class="sample-buttons"><button id="samplePier">Load sample: Pier</button><button id="sampleBoulevard">Load sample: Boulevard</button><button id="samePhoto">Same photo everywhere</button></div><div id="library" class="library"></div><p class="hint">Choose a thumbnail, then choose a panel.</p></section>
+      <section><h2>02 / Layout</h2><div id="layouts" class="layout-buttons"></div><div id="panelChips" class="panel-chips"></div></section>
+      <section><h2>03 / Selected Panel</h2><div class="control-row"><label for="zoom">Zoom</label><input id="zoom" type="range" min="1" max="3" step=".01"></div><div class="control-row"><label for="moveX">Move X</label><input id="moveX" type="range" min="-50" max="50"></div><div class="control-row"><label for="moveY">Move Y</label><input id="moveY" type="range" min="-50" max="50"></div><div class="control-row"><label for="tone">Tone</label><select id="tone"><option value="normal">Normal</option><option value="warm">Warm</option><option value="cool">Cool</option><option value="mono">Mono</option></select></div><button id="nextPhoto" class="wide">Next photo ↗</button></section>
+      <section><h2>04 / Look</h2><label class="field">Colour grade<select id="grade"><option value="sunset">Sunset</option><option value="neon">Neon Night</option><option value="gold">Golden Hour</option><option value="midnight">Midnight</option></select></label></section>
+      <section><h2>05 / Caption</h2><label class="field">Title<input id="title" value="VICE HEAT" maxlength="48"></label><label class="field">Subtitle<input id="subtitle" value="One city / no brakes" maxlength="70"></label><div class="field-pair"><label class="field">Position<select id="titlePos"><option value="bottom">Bottom</option><option value="top">Top</option></select></label><label class="field">Colour<select id="titleColor"><option value="white">White</option><option value="pink">Sunset Pink</option><option value="cyan">Neon Cyan</option><option value="gold">Gold</option></select></label></div></section>
+      <section><h2>06 / Export</h2><div class="export-buttons"><button data-size="1080,1080">Square · 1080</button><button data-size="1080,1350">Portrait · 1080</button><button data-size="1920,1080">Landscape · 1920</button></div><p id="status" class="status">Ready to make something loud.</p></section>
+    </aside>
+    <section class="preview"><div class="preview-heading"><span>LIVE PREVIEW</span><span id="dimension">1080 × 1080</span></div><div class="canvas-wrap"><canvas id="cover" width="1080" height="1080" aria-label="Cover art preview"></canvas></div></section>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
