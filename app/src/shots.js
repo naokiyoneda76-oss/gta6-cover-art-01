@@ -3,7 +3,7 @@ import { LAYOUTS, panelCrop } from './panels.js';
 
 const params = new URLSearchParams(location.search);
 const waitPaint = async () => { await document.fonts.ready; await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); window.__shotReady = true; };
-const fontsReady = async () => { try { await Promise.all([document.fonts.load('900 100px ViceBlack'), document.fonts.load('700 100px ViceBold'), document.fonts.load('100px Anton'), document.fonts.load('100px "Bowlby One"')]); } catch {} };
+const fontsReady = async () => { try { await Promise.all([document.fonts.load('900 100px ViceBlack'), document.fonts.load('700 100px ViceBold'), document.fonts.load('100px Anton'), document.fonts.load('100px "Bowlby One"'), document.fonts.load('100px Pricedown')]); } catch {} };
 
 export async function runShot(query, setup) {
   const q = new URLSearchParams(query || location.search); const names = (q.get('photo') || 'pier,boulevard').split(',').filter(Boolean);

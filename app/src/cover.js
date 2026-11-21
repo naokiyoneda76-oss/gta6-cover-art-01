@@ -59,22 +59,23 @@ function drawCenterTitle(ctx, W, H, state) {
   const words = String(state.title || '').trim().toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return;
   const line2 = words.pop(), line1 = words.join(' '), lines = line1 ? [line1, line2] : [line2];
-  const family = state.titleFont || 'Bowlby One';
+  const family = state.titleFont || 'Pricedown';
   const rand = (i, code, salt) => { const v = Math.sin(i * 127.1 + code * 311.7 + salt * 74.7) * 43758.5453; return v - Math.floor(v); };
   let size = Math.round(H * .19);
   const layoutLine = (line) => {
     ctx.font = `${size}px ${family}, sans-serif`;
-    const spacing = -size * .065;
+    const spacing = -size * .02;
     const chars = [...line].map((ch, i) => {
       const code = ch.charCodeAt(0);
-      return { ch, adv: ctx.measureText(ch).width, rot: (rand(i, code, 1) - .5) * .07, sy: 1.18 + rand(i, code, 2) * .14, sx: .88, dy: (rand(i, code, 3) - .5) * size * .04 };
+      return { ch, adv: ctx.measureText(ch).width, rot: (rand(i, code, 1) - .5) * .04, sy: 1 + rand(i, code, 2) * .06, sx: 1, dy: (rand(i, code, 3) - .5) * size * .03 };
     });
     const width = chars.reduce((s, c) => s + c.adv * c.sx, 0) + spacing * Math.max(0, chars.length - 1);
     return { chars, spacing, width };
   };
   let laid = lines.map(layoutLine);
   while (Math.max(...laid.map(l => l.width)) > W * .94 && size > 20) { size -= 3; laid = lines.map(layoutLine); }
-  const lineStep = size * .78, cy = H * .415, firstY = cy - (lines.length - 1) * lineStep / 2;
+  while (Math.max(...laid.map(l => l.width)) < W * .55 && size < H * .34) { size += 3; laid = lines.map(layoutLine); }
+  const lineStep = size * .8, cy = W > H ? H * .5 : H * .415, firstY = cy - (lines.length - 1) * lineStep / 2;
   ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = size * .05; ctx.shadowOffsetY = size * .04;
   lines.forEach((line, li) => {

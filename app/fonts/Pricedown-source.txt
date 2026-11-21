@@ -1,0 +1,4 @@
+Pricedown Black (Pricedown Bl.otf), Version 5.200, Typodermic Fonts Inc.
+Source: official Typodermic free-fonts collection, https://typodermicfonts.com/assets/downloads/typodermic-free-fonts-2026i.zip (linked from https://typodermicfonts.com/downloads/)
+License: Typodermic Desktop EULA 2026 (PDF bundled alongside as Typodermic-Desktop-EULA-2026.pdf). The desktop EULA covers use in finished artwork; font embedding is not covered by it — adopted for this fan-made entry by the project owner's decision (2026-11-21).
+Trademark: Pricedown is a trademark of Typodermic Fonts Inc.
