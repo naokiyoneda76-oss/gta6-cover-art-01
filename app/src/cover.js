@@ -8,8 +8,9 @@ const wash = (ctx, w, h, stops, composite = 'soft-light', alpha = 1) => {
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h); ctx.restore();
 };
 
-const COMIC = { levels: 5, sat: 1.45, contrast: 1.08, edgeLo: 14, edgeHi: 70, edgeAlpha: 1, tintSoft: .38, tintOverlay: .16 };
+const COMIC = { levels: 6, sat: 1.33, contrast: 1.08, edgeLo: 17, edgeHi: 70, edgeAlpha: 1, tintSoft: .35, tintOverlay: .12 };
 const COMIC_TINTS = ['#ff8a2a', '#4d7bff', '#b45cff', '#ffd23c', '#ff4d7e', '#ff8a2a', '#4d7bff'];
+const TITLE_SCALE = .92;
 const toneCss = t => t === 'warm' ? 'sepia(.28)' : t === 'cool' ? 'hue-rotate(22deg) saturate(1.15)' : t === 'mono' ? 'grayscale(1)' : '';
 
 function comicPanel(img, p, pw, ph, tint) {
@@ -25,8 +26,11 @@ function comicPanel(img, p, pw, ph, tint) {
   const sctx = small.getContext('2d'); sctx.imageSmoothingEnabled = true; sctx.drawImage(canvas, 0, 0, small.width, small.height);
   ctx.imageSmoothingEnabled = true; ctx.clearRect(0, 0, w, h); ctx.drawImage(small, 0, 0, w, h);
   const image = ctx.getImageData(0, 0, w, h), data = image.data, lum = new Float32Array(w * h), step = 255 / (COMIC.levels - 1);
+  const orig = new Float32Array(w * h * 3), lift = v => 255 * Math.pow(v / 255, .93);
   for (let i = 0; i < w * h; i++) {
-    const j = i * 4; lum[i] = .299 * data[j] + .587 * data[j + 1] + .114 * data[j + 2];
+    const j = i * 4;
+    for (let c = 0; c < 3; c++) { const v = lift(data[j + c]); data[j + c] = v; orig[i * 3 + c] = v; }
+    lum[i] = .299 * data[j] + .587 * data[j + 1] + .114 * data[j + 2];
   }
   const mag = new Float32Array(w * h);
   for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
@@ -42,8 +46,15 @@ function comicPanel(img, p, pw, ph, tint) {
     dilated[i] = max;
   }
   for (let i = 0; i < w * h; i++) {
-    const j = i * 4, a = clamp((dilated[i] / 4 - COMIC.edgeLo) / (COMIC.edgeHi - COMIC.edgeLo), 0, 1) * COMIC.edgeAlpha;
-    for (let c = 0; c < 3; c++) data[j + c] = Math.round(Math.round(data[j + c] / step) * step * (1 - a));
+    const j = i * 4, r = orig[i * 3], g = orig[i * 3 + 1], b = orig[i * 3 + 2];
+    const skin = r > 95 && g > 40 && b > 20 && r > g && r > b && Math.abs(r - g) > 15 && (r - b) > 15;
+    let a = clamp((dilated[i] / 4 - COMIC.edgeLo) / (COMIC.edgeHi - COMIC.edgeLo), 0, 1) * COMIC.edgeAlpha;
+    if (skin) a *= .55;
+    for (let c = 0; c < 3; c++) {
+      const o = orig[i * 3 + c]; let q = Math.round(o / step) * step;
+      if (skin) q = q + (o - q) * .45;
+      data[j + c] = Math.round(q * (1 - a));
+    }
   }
   ctx.putImageData(image, 0, 0);
   if (tint) {
@@ -75,6 +86,7 @@ function drawCenterTitle(ctx, W, H, state) {
   let laid = lines.map(layoutLine);
   while (Math.max(...laid.map(l => l.width)) > W * .94 && size > 20) { size -= 3; laid = lines.map(layoutLine); }
   while (Math.max(...laid.map(l => l.width)) < W * .55 && size < H * .34) { size += 3; laid = lines.map(layoutLine); }
+  size = Math.max(20, Math.round(size * TITLE_SCALE)); laid = lines.map(layoutLine);
   const lineStep = size * .8, cy = W > H ? H * .5 : H * .415, firstY = cy - (lines.length - 1) * lineStep / 2;
   ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = size * .05; ctx.shadowOffsetY = size * .04;
